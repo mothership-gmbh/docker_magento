@@ -1,0 +1,49 @@
+# sudo dlite install --share /Volumes/projects
+# dlite stop && sudo dlite install -v 2.3.0 --share=/Volumes/projects && dlite start
+# dlite update -v 2.3.0
+# sudo dlite daemon
+# ssh root@local.docker : dhyve
+#~/.dlite/config.json
+#
+# Some cleanup tips: http://jimhoskins.com/2013/07/27/remove-untagged-docker-images.html
+#
+
+#
+# http://zaiste.net/2014/09/removing_docker_containers/
+# http://blog.yohanliyanage.com/2015/05/docker-clean-up-after-yourself/
+#
+# Remove exited containes
+# docker rm -v $(docker ps -a -q -f status=exited)
+#
+# Remove dangling/untagged containers
+# docker images -q --filter dangling=true | xargs docker rmi
+#
+#
+version: '2'
+services:
+
+  mothership_base:
+    build: ./mothership
+    environment:
+      XDEBUG_CONFIG: remote_host=172.16.79.4
+    volumes:
+      - /Volumes/projects/exxpozed/shop:/project
+    ports:
+      - 192.168.64.5:80:80
+      - 192.168.64.5:443:443
+
+      # Dlite exposes port 22. So we need to assign the SSH port to another one.
+      # ssh root@local.docker -p22   -> Dlite docker
+      # ssh root@local.docker -p2222 -> mothership_base
+      - 192.168.64.5:2222:22
+    restart: always
+
+  exxpozed_maria_db:
+    image: paintedfox/mariadb
+    environment:
+      USER: super
+      PASS: super123
+    volumes:
+      - /Volumes/projects/docker/mariadb/data:/data
+    ports:
+      - 192.168.64.5:3306:3306
