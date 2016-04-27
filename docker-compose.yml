@@ -27,7 +27,7 @@ services:
     environment:
       XDEBUG_CONFIG: remote_host=172.16.79.4
     volumes:
-      - /Volumes/projects/exxpozed/shop:/project
+      - /Volumes/projects/docker/volumes/exxpozed:/var/www/share/dev/htdocs/www
     ports:
       - 192.168.64.5:80:80
       - 192.168.64.5:443:443
@@ -37,6 +37,8 @@ services:
       # ssh root@local.docker -p2222 -> mothership_base
       - 192.168.64.5:2222:22
     restart: always
+    links:
+      - exxpozed_maria_db:link_mariadb
 
   exxpozed_maria_db:
     image: paintedfox/mariadb
@@ -47,24 +49,5 @@ services:
       - /Volumes/projects/docker/mariadb/data:/data
     ports:
       - 192.168.64.5:3306:3306
-
-  # docker run -d -p 9200:9200 -p 9300:9300 -v /home/docker/elasticsearch/data:/usr/share/elasticsearch/data -v /home/docker/elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml elasticsearch:2.1 /usr/share/elasticsearch/bin/elasticsearch -Des.insecure.allow.root=true
-  exxpozed_elasticsearch:
-    image: elasticsearch:2.1
-    volumes:
-      - /home/docker/elasticsearch/data:/usr/share/elasticsearch/data
-    ports:
-      - 192.168.64.5:9300:9300
-      - 192.168.64.5:9200:9200
-    command:
-      - /usr/share/elasticsearch/bin/elasticsearch -Des.insecure.allow.root=true
-
-  # Elasticsearch 2.1 is not supported by Kibana 5 :/
-  exxpozed_kibana-int:
-    image: kibana:4.5.0
-    ports:
-      - 5601:5601
-    environment:
-      - ELASTICSEARCH_URL=http://exxpozed_elasticsearch:9200
-    links:
-      - exxpozed_elasticsearch
+# ssh-keygen -R -> fixes host keys
+# SET HOME DIRECTORY for ROOT USER!

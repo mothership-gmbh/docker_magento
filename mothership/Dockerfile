@@ -125,6 +125,7 @@ RUN cd /etc/apache2/ssl && openssl req -new -x509 -key local_docker.key -out loc
 RUN rm /etc/apache2/sites-enabled/000-default.conf
 COPY templates/project.conf /etc/apache2/sites-enabled/local-docker.conf
 RUN a2enmod ssl
+RUN a2enmod rewrite
 RUN service apache2 restart
 
 
