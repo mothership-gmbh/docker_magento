@@ -120,7 +120,7 @@ RUN mkdir -p /var/www/share/dev/htdocs/www
 
 RUN mkdir /etc/apache2/ssl
 RUN cd /etc/apache2/ssl && openssl genrsa -out local_docker.key 2048
-RUN openssl req -new -x509 -key local_docker.key -out local_docker.cert -days 3650 -subj /CN=local_docker
+RUN cd /etc/apache2/ssl && openssl req -new -x509 -key local_docker.key -out local_docker.cert -days 3650 -subj /CN=local_docker
 
 RUN rm /etc/apache2/sites-enabled/000-default.conf
 COPY templates/project.conf /etc/apache2/sites-enabled/local-docker.conf
