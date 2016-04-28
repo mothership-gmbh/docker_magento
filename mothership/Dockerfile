@@ -126,6 +126,7 @@ RUN rm /etc/apache2/sites-enabled/000-default.conf
 COPY templates/project.conf /etc/apache2/sites-enabled/local-docker.conf
 RUN a2enmod ssl
 RUN a2enmod rewrite
+RUN php5enmod mcrypt
 RUN service apache2 restart
 
 
