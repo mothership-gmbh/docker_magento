@@ -22,7 +22,7 @@ ssh mothership
 # Volumes / mount strategy
 
 # Fast sync
-If you want to sync all your data from one directory to another via NFS, you might need A LOT of time.
+If you want to sync all your data from one directory to another via NFS, you might need A LOT of time as data transfer via nfs is not as fast as a direct copy from the disk. I recommend using the script ```sync.sh``` which completely deletes the target volume and use ```rsync``` to keep the volume in sync.
 
 # Issues
 
