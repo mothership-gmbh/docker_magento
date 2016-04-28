@@ -20,6 +20,8 @@
 #
 # http://lukeswart.net/2016/03/lets-deploy-part-1/
 #
+# cat /var/db/dhcpd_leases
+#
 version: '2'
 services:
 
