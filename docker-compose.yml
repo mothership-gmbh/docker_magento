@@ -18,36 +18,52 @@
 # Remove dangling/untagged containers
 # docker images -q --filter dangling=true | xargs docker rmi
 #
+# http://lukeswart.net/2016/03/lets-deploy-part-1/
 #
 version: '2'
 services:
 
-  mothership_base:
-    build: ./mothership
+  web:
+    image: azngeek/docker_magento:latest
     environment:
       XDEBUG_CONFIG: remote_host=172.16.79.4
     volumes:
-      - /Volumes/projects/docker/volumes/exxpozed:/var/www/share/dev/htdocs/www
+      - ${PROJECT_VOlUME}/htdocs:/var/www/share/dev/htdocs
     ports:
-      - 192.168.64.5:80:80
-      - 192.168.64.5:443:443
+      - ${DOCKER_IP}:80:80
+      - ${DOCKER_IP}:443:443
 
       # Dlite exposes port 22. So we need to assign the SSH port to another one.
       # ssh root@local.docker -p22   -> Dlite docker
       # ssh root@local.docker -p2222 -> mothership_base
-      - 192.168.64.5:2222:22
+      - ${DOCKER_IP}:2222:22
     restart: always
     links:
-      - exxpozed_maria_db:link_mariadb
+      - maria_db:link_mariadb
+      - elasticsearch:link_elastic
 
-  exxpozed_maria_db:
+  maria_db:
     image: paintedfox/mariadb
     environment:
       USER: super
       PASS: super123
     volumes:
-      - /Volumes/projects/docker/mariadb/data:/data
+      - ${PROJECT_VOlUME}/db:/data
     ports:
-      - 192.168.64.5:3306:3306
+      - ${DOCKER_IP}:3306:3306
 # ssh-keygen -R -> fixes host keys
 # SET HOME DIRECTORY for ROOT USER!
+# docker run -d -p 9200:9200 -p 9300:9300 -v /home/docker/elasticsearch/data:/usr/share/elasticsearch/data -v /home/docker/elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml elasticsearch:2.1 /usr/share/elasticsearch/bin/elasticsearch -Des.insecure.allow.root=true
+
+  elasticsearch:
+    image: elasticsearch:2.1
+    environment:
+      USER: super
+      PASS: super123
+    volumes:
+      - ${PROJECT_VOlUME}/elasticsearch/data:/usr/share/elasticsearch/data
+      - ${PROJECT_VOlUME}/elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+    ports:
+      - ${DOCKER_IP}:9200:9200
+      - ${DOCKER_IP}:9300:9300
+    command: /usr/share/elasticsearch/bin/elasticsearch -Des.insecure.allow.root=true
