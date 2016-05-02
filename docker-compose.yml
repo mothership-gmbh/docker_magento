@@ -26,14 +26,20 @@ version: '2'
 services:
 
   web:
-    image: azngeek/docker_magento:latest
+    build: ./mothership
+    #image: azngeek/docker_magento:latest
     environment:
-      XDEBUG_CONFIG: remote_host=172.16.79.4
+      XDEBUG_CONFIG: idekey=PHPSTORM
+
     volumes:
       - ${PROJECT_VOlUME}/htdocs:/var/www/share/dev/htdocs
+      - ${PROJECT_VOlUME}/apache2/${PROJECT_NAME}.conf:/etc/apache2/sites-enabled/${PROJECT_NAME}.conf
     ports:
       - ${DOCKER_IP}:80:80
       - ${DOCKER_IP}:443:443
+
+      # we need to expose the port for XDEBUG
+      - ${DOCKER_IP}:9000:9000
 
       # Dlite exposes port 22. So we need to assign the SSH port to another one.
       # ssh root@local.docker -p22   -> Dlite docker
