@@ -15,6 +15,14 @@ mkdir -p ${PROJECT_VOlUME}/db
 mkdir -p ${PROJECT_VOlUME}/elasticsearch/data
 mkdir -p ${PROJECT_VOlUME}/elasticsearch/config
 mkdir -p ${PROJECT_VOlUME}/apache2
+mkdir -p ${PROJECT_VOlUME}/home
+
+
+
+if [ ! -f ${PROJECT_VOlUME}/home/.bash_history ]; then
+    echo "Create bash history!"
+    cp ./home/.bash_history ${PROJECT_VOlUME}/home/.bash_history
+fi
 
 cp ./elasticsearch/config/elasticsearch.yml ${PROJECT_VOlUME}/elasticsearch/config/elasticsearch.yml
 cp ./apache/host.conf <> ${PROJECT_VOlUME}/elasticsearch/config/elasticsearch.yml

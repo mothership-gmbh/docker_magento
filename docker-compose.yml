@@ -30,10 +30,14 @@ services:
     #image: azngeek/docker_magento:latest
     environment:
       XDEBUG_CONFIG: idekey=PHPSTORM
+      PROMPT_COMMAND: "history -a"
 
     volumes:
       - ${PROJECT_VOlUME}/htdocs:/var/www/share/dev/htdocs
       - ${PROJECT_VOlUME}/apache2/${PROJECT_NAME}.conf:/etc/apache2/sites-enabled/${PROJECT_NAME}.conf
+
+      # add bash history so that it wont get deleted
+      - ${PROJECT_VOlUME}/home/.bash_history:/root/.bash_history
     ports:
       - ${DOCKER_IP}:80:80
       - ${DOCKER_IP}:443:443
