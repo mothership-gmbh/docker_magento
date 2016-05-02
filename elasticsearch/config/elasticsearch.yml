@@ -1,0 +1,8 @@
+cluster.name: elasticsearch_9200
+
+node.local: true
+discovery.zen.ping.multicast: false
+
+script.inline: on
+script.indexed: on
+network.host: 0.0.0.0
