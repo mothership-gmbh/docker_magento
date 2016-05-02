@@ -112,6 +112,8 @@ RUN chmod +x /usr/local/bin/magerun
 ###############################
 RUN mkdir -p /var/www/share/dev/htdocs
 
+RUN echo "alias p='cd /var/www/share/dev/htdocs'" >> ~/.bashrc
+
 ###############################
 # Apache 2 host configuration #
 ###############################
