@@ -68,7 +68,7 @@ services:
 # docker run -d -p 9200:9200 -p 9300:9300 -v /home/docker/elasticsearch/data:/usr/share/elasticsearch/data -v /home/docker/elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml elasticsearch:2.1 /usr/share/elasticsearch/bin/elasticsearch -Des.insecure.allow.root=true
 
   elasticsearch:
-    image: elasticsearch:2.1
+    image: elasticsearch:2.3.3
     environment:
       USER: super
       PASS: super123
@@ -79,3 +79,11 @@ services:
       - ${DOCKER_IP}:9200:9200
       - ${DOCKER_IP}:9300:9300
     command: /usr/share/elasticsearch/bin/elasticsearch -Des.insecure.allow.root=true
+
+  # Kibana 5 requires elasticsearch 2.2
+  kibana:
+    image: kibana:4.5.1
+    links:
+      - elasticsearch:link_elastic
+    ports:
+      - ${DOCKER_IP}:5601:5601
