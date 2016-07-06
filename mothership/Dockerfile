@@ -21,13 +21,15 @@
 
 # As PHP 7 is not supported yet, we will use another image then FROM phusion/baseimage:0.9.18
 # https://github.com/phusion/baseimage-docker/issues/305
-FROM sunfoxcz/baseimage
+# FROM sunfoxcz/baseimage
+FROM phusion/baseimage:0.9.18
 
 # Use baseimage-docker's init system.
 CMD ["/sbin/my_init"]
 
+RUN sudo add-apt-repository ppa:ondrej/php -y
 
-RUN apt-get update && apt-get install -y \
+RUN apt-get update && apt-get install -y --force-yes \
 
 # Install mandatory tools
 
@@ -52,6 +54,8 @@ RUN apt-get update && apt-get install -y \
     php7.0-imap \
     php7.0-xsl \
     php7.0-dev \
+    php7.0-mbstring \
+    php7.0-bcmath \
     libapache2-mod-php7.0 \
   #  php7.0-memcache \
 
@@ -63,13 +67,21 @@ RUN apt-get update && apt-get install -y \
     build-essential \
     curl \
     wget
+
+#    inetutils-tools \
+#    inetutils-ping \
+#    net-tools \
+#    telnet
+
+   # librabbitmq-dev
   #  ruby1.9.1-dev
   #  libsqlite3-dev
 
 # Configure Apache2
 
 # configure PHP
-
+#RUN pecl install amqp
+#RUN echo "extension=amqp.so" > /etc/php/7.0/cli/php.ini
 
 ###############################
 # PHP / XDEBUG                #
@@ -111,8 +123,7 @@ RUN wget --no-check-certificate https://raw.github.com/rupa/z/master/z.sh -O /us
 # Fix for sunfoxcz iamge      #
 # add SUDO command            #
 ###############################
-RUN su -
-RUN apt-get install sudo
+
 
 ###############################
 # modman.phar                #
