@@ -18,7 +18,10 @@
 # sure you lock down to a specific version, not to `latest`!
 # See https://github.com/phusion/baseimage-docker/blob/master/Changelog.md for
 # a list of version numbers.
-FROM phusion/baseimage:0.9.18
+
+# As PHP 7 is not supported yet, we will use another image then FROM phusion/baseimage:0.9.18
+# https://github.com/phusion/baseimage-docker/issues/305
+FROM sunfoxcz/baseimage
 
 # Use baseimage-docker's init system.
 CMD ["/sbin/my_init"]
@@ -34,21 +37,23 @@ RUN apt-get update && apt-get install -y \
 # Install Apache2
     apache2 \
 
-# Install PHP 5
-    php5 \
-    php5-cli \
-    php5-common \
-    php5-gd \
-    php5-mysql \
-    php5-curl \
-    php5-intl \
-    php5-mcrypt \
-    php5-tidy \
-    php5-xdebug \
-    php5-imagick \
-    php5-imap \
-    php5-xsl \
-    php5-memcache \
+# Install PHP 7
+    php7.0 \
+    php7.0-cli \
+    php7.0-common \
+    php7.0-gd \
+    php7.0-mysql \
+    php7.0-curl \
+    php7.0-int \
+    php7.0-mcrypt \
+    php7.0-tidy \
+  #  php7.0-xdebug \
+  #  php7.0-imagick \
+    php7.0-imap \
+    php7.0-xsl \
+    php7.0-dev \
+    libapache2-mod-php7.0 \
+  #  php7.0-memcache \
 
 # Install for mysql client
     mysql-client \
@@ -71,9 +76,24 @@ RUN apt-get update && apt-get install -y \
 #                             #
 # - Check the ip in the ini   #
 ###############################
-RUN  rm /etc/php5/cli/conf.d/20-xdebug.ini
-COPY templates/xdebug-cli.ini /etc/php5/cli/conf.d/20-xdebug.ini
-COPY templates/xdebug-apache.ini /etc/php5/apache2/conf.d/20-xdebug.ini
+#RUN  rm /etc/php5/cli/conf.d/20-xdebug.ini
+#COPY templates/xdebug-cli.ini /etc/php5/cli/conf.d/20-xdebug.ini
+#COPY templates/xdebug-apache.ini /etc/php5/apache2/conf.d/20-xdebug.ini
+
+#################################
+# XDEBUG - ONLY FOR PHP7        #
+# Based on:                     #
+# https://xdebug.org/wizard.php #
+#################################
+RUN cd /tmp && wget http://xdebug.org/files/xdebug-2.4.0.tgz
+RUN cd /tmp && tar -xvzf xdebug-2.4.0.tgz
+RUN cd /tmp/xdebug-2.4.0 && phpize
+RUN cd /tmp/xdebug-2.4.0 && ./configure
+RUN cd /tmp/xdebug-2.4.0 && make
+RUN cp /tmp/xdebug-2.4.0/modules/xdebug.so /usr/lib/php/20151012
+
+COPY templates/xdebug-cli.ini /etc/php/7.0/cli/conf.d/20-xdebug.ini
+COPY templates/xdebug-apache.ini /etc/php/7.0/apache2/conf.d/20-xdebug.ini
 
 ###############################
 # enable SSH                  #
@@ -85,7 +105,14 @@ RUN /usr/sbin/enable_insecure_key
 # z.sh                        #
 ###############################
 RUN wget --no-check-certificate https://raw.github.com/rupa/z/master/z.sh -O /usr/local/bin/z.sh
-# RUN echo '. /usr/local/bin/z.sh' >> /home/vagrant/.bashrc
+#RUN echo '. /usr/local/bin/z.sh' >> /home/vagrant/.bashrc
+
+###############################
+# Fix for sunfoxcz iamge      #
+# add SUDO command            #
+###############################
+RUN su -
+RUN apt-get install sudo
 
 ###############################
 # modman.phar                #
@@ -104,7 +131,7 @@ RUN chmod +x /usr/local/bin/composer
 ###############################
 # magerun.phar                #
 ###############################
-RUN wget --no-check-certificate https://raw.github.com/netz98/n98-magerun/master/n98-magerun.phar -O /usr/local/bin/magerun
+RUN wget --no-check-certificate https://files.magerun.net/n98-magerun.phar -O /usr/local/bin/magerun
 RUN chmod +x /usr/local/bin/magerun
 
 ###############################
@@ -132,7 +159,7 @@ RUN rm /etc/apache2/sites-enabled/000-default.conf
 COPY templates/project.conf /etc/apache2/sites-enabled/local-docker.conf
 RUN a2enmod ssl
 RUN a2enmod rewrite
-RUN php5enmod mcrypt
+#RUN php7enmod mcrypt
 RUN service apache2 restart
 
 
