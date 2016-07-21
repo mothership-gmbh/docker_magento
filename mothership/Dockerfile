@@ -31,15 +31,14 @@ RUN sudo add-apt-repository ppa:ondrej/php -y
 
 RUN apt-get update && apt-get install -y --force-yes \
 
-# Install mandatory tools
-
+    # Install mandatory tools
     vim \
     git \
 
-# Install Apache2
+    # Install Apache2
     apache2 \
 
-# Install PHP 7
+    # Install PHP 7
     php7.0 \
     php7.0-cli \
     php7.0-common \
@@ -49,48 +48,46 @@ RUN apt-get update && apt-get install -y --force-yes \
     php7.0-int \
     php7.0-mcrypt \
     php7.0-tidy \
-  #  php7.0-xdebug \
-  #  php7.0-imagick \
     php7.0-imap \
     php7.0-xsl \
     php7.0-dev \
     php7.0-mbstring \
     php7.0-bcmath \
     libapache2-mod-php7.0 \
-  #  php7.0-memcache \
+    # php7.0-memcache \
 
-# Install for mysql client
+    # Install for mysql client
     mysql-client \
 
-# Install for mailcatcher
-
+    # required for mailcatcher
     build-essential \
     curl \
-    wget
+    wget \
 
-#    inetutils-tools \
-#    inetutils-ping \
-#    net-tools \
-#    telnet
+    # for using the dot command
+    graphviz \
 
-   # librabbitmq-dev
-  #  ruby1.9.1-dev
-  #  libsqlite3-dev
+    # lets also include a nice terminal multiplexer
+    tmux \
 
-# Configure Apache2
+    # Required for some stuff
+    gem
 
-# configure PHP
-#RUN pecl install amqp
-#RUN echo "extension=amqp.so" > /etc/php/7.0/cli/php.ini
+
+
+#################################
+# JAVA OPENJDK                  #
+#################################
+RUN sudo add-apt-repository ppa:openjdk-r/ppa  -y
+RUN sudo apt-get update && apt-get install openjdk-8-jre -y --force-yes
 
 ###############################
-# PHP / XDEBUG                #
-#                             #
-# - Check the ip in the ini   #
+# Logstash                    #
 ###############################
-#RUN  rm /etc/php5/cli/conf.d/20-xdebug.ini
-#COPY templates/xdebug-cli.ini /etc/php5/cli/conf.d/20-xdebug.ini
-#COPY templates/xdebug-apache.ini /etc/php5/apache2/conf.d/20-xdebug.ini
+RUN wget -qO - https://packages.elastic.co/GPG-KEY-elasticsearch | sudo apt-key add -
+RUN echo "deb https://packages.elastic.co/logstash/2.3/debian stable main" | sudo tee -a /etc/apt/sources.list
+RUN sudo apt-get update && sudo apt-get install -y --force-yes logstash
+RUN ln -s /opt/logstash/bin/logstash /usr/bin/logstash
 
 #################################
 # XDEBUG - ONLY FOR PHP7        #
@@ -117,16 +114,11 @@ RUN /usr/sbin/enable_insecure_key
 # z.sh                        #
 ###############################
 RUN wget --no-check-certificate https://raw.github.com/rupa/z/master/z.sh -O /usr/local/bin/z.sh
-#RUN echo '. /usr/local/bin/z.sh' >> /home/vagrant/.bashrc
+RUN chmod +x /usr/local/bin/z.sh
+RUN echo '. /usr/local/bin/z.sh' >> /root/.bashrc
 
 ###############################
-# Fix for sunfoxcz iamge      #
-# add SUDO command            #
-###############################
-
-
-###############################
-# modman.phar                #
+# modman.phar                 #
 ###############################
 RUN git clone https://github.com/colinmollenhour/modman.git /usr/local/src/modman
 RUN mv /usr/local/src/modman/modman /usr/local/bin/modman
@@ -170,7 +162,6 @@ RUN rm /etc/apache2/sites-enabled/000-default.conf
 COPY templates/project.conf /etc/apache2/sites-enabled/local-docker.conf
 RUN a2enmod ssl
 RUN a2enmod rewrite
-#RUN php7enmod mcrypt
 RUN service apache2 restart
 
 
