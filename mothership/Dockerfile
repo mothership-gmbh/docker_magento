@@ -91,7 +91,7 @@ RUN gem install tmuxinator
 #################################
 # JAVA OPENJDK                  #
 #################################
-RUN sudo add-apt-repository ppa:openjdk-r/ppa  -y &&
+RUN sudo add-apt-repository ppa:openjdk-r/ppa -y &&
 sudo apt-get update && apt-get install openjdk-8-jre -y --force-yes
 
 ###############################
