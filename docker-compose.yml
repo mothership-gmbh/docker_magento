@@ -26,8 +26,11 @@ version: '2'
 services:
 
   web:
-    build: ./mothership
-    #image: azngeek/docker_magento:latest
+
+    # You should avoid using a Dockerfile as rebuilding will add too many layers to your docker host system
+    # Instead log into docker hub, build your image and use the existing image
+    #build: ./mothership
+    image: azngeek/docker_magento:latest
     environment:
       XDEBUG_CONFIG: idekey=PHPSTORM
       PROMPT_COMMAND: "history -a"
@@ -35,11 +38,18 @@ services:
     volumes:
       - ${PROJECT_VOlUME}/htdocs:/var/www/share/dev/htdocs
       - ${PROJECT_VOlUME}/apache2/${PROJECT_NAME}.conf:/etc/apache2/sites-enabled/${PROJECT_NAME}.conf
+      - ${PROJECT_VOlUME}/apache2/ports.conf:/etc/apache2/ports.conf
 
       # add bash history so that it wont get deleted
       - ${PROJECT_VOlUME}/home/.bash_history:/root/.bash_history
+
+      # tmuxinator
+      #- container:configuration-tmuxinator-sync:/var/configuration/tmuxinator:rw
+
     ports:
-      - ${DOCKER_IP}:80:80
+      # Without varnish we would forward the port to 80. With varnish at 80
+      # - ${DOCKER_IP}:8080:80
+      - ${DOCKER_IP}:8080:8080
       - ${DOCKER_IP}:443:443
 
       # we need to expose the port for XDEBUG
@@ -87,3 +97,15 @@ services:
       - elasticsearch:link_elastic
     ports:
       - ${DOCKER_IP}:5601:5601
+
+  # varnish
+  # cat /etc/init.d/varnish
+  # /etc/sysconfig/varnish
+  # /etc/varnish/default.vcl
+  varnish:
+    build: ./dockerfiles/varnish
+    ports:
+      - ${DOCKER_IP}:80:80
+      - ${DOCKER_IP}:6082:6082
+    links:
+      - web
