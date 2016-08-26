@@ -77,6 +77,13 @@ RUN apt-get update && apt-get install -y --force-yes \
 ## install https://github.com/tmuxinator/tmuxinator
 
 #################################
+# Varnish                       #
+#################################
+RUN wget -qO - https://repo.varnish-cache.org/ubuntu/GPG-key.txt | sudo apt-key add - &&
+echo "deb https://repo.varnish-cache.org/ubuntu/ trusty varnish-3.0" >> /etc/apt/sources.list.d/varnish-cache.list &&
+sudo apt-get update && sudo apt-get install -y --force-yes varnish
+
+#################################
 # TMUXINATOR                    #
 #################################
 RUN gem install tmuxinator
