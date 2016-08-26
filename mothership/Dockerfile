@@ -79,8 +79,8 @@ RUN apt-get update && apt-get install -y --force-yes \
 #################################
 # Varnish                       #
 #################################
-RUN wget -qO - https://repo.varnish-cache.org/ubuntu/GPG-key.txt | sudo apt-key add - &&
-echo "deb https://repo.varnish-cache.org/ubuntu/ trusty varnish-3.0" | sudo tee -a /etc/apt/sources.list.d/varnish-cache.list &&
+RUN curl http://repo.varnish-cache.org/debian/GPG-key.txt | sudo apt-key add - && \
+echo "deb https://repo.varnish-cache.org/ubuntu/ trusty varnish-3.0" | sudo tee -a /etc/apt/sources.list.d/varnish-cache.list && \
 sudo apt-get update && sudo apt-get install -y --force-yes varnish
 
 #################################
@@ -91,15 +91,16 @@ RUN gem install tmuxinator
 #################################
 # JAVA OPENJDK                  #
 #################################
-RUN sudo add-apt-repository ppa:openjdk-r/ppa -y &&
-sudo apt-get update && apt-get install openjdk-8-jre -y --force-yes
+RUN sudo add-apt-repository ppa:openjdk-r/ppa -y && \
+sudo apt-get update && \
+apt-get install openjdk-8-jre -y --force-yes
 
 ###############################
 # Logstash                    #
 ###############################
-RUN wget -qO - https://packages.elastic.co/GPG-KEY-elasticsearch | sudo apt-key add - &&
-echo "deb https://packages.elastic.co/logstash/2.3/debian stable main" | sudo tee -a /etc/apt/sources.list &&
-sudo apt-get update && sudo apt-get install -y --force-yes logstash &&
+RUN wget -qO - https://packages.elastic.co/GPG-KEY-elasticsearch | sudo apt-key add - && \
+echo "deb https://packages.elastic.co/logstash/2.3/debian stable main" | sudo tee -a /etc/apt/sources.list && \
+sudo apt-get update && sudo apt-get install -y --force-yes logstash && \
 ln -s /opt/logstash/bin/logstash /usr/bin/logstash
 
 #################################
@@ -107,11 +108,11 @@ ln -s /opt/logstash/bin/logstash /usr/bin/logstash
 # Based on:                     #
 # https://xdebug.org/wizard.php #
 #################################
-RUN cd /tmp && wget http://xdebug.org/files/xdebug-2.4.0.tgz &&
-cd /tmp && tar -xvzf xdebug-2.4.0.tgz &&
-cd /tmp/xdebug-2.4.0 && phpize &&
-cd /tmp/xdebug-2.4.0 && ./configure &&
-cd /tmp/xdebug-2.4.0 && make &&
+RUN cd /tmp && wget http://xdebug.org/files/xdebug-2.4.0.tgz && \
+cd /tmp && tar -xvzf xdebug-2.4.0.tgz && \
+cd /tmp/xdebug-2.4.0 && phpize && \
+cd /tmp/xdebug-2.4.0 && ./configure && \
+cd /tmp/xdebug-2.4.0 && make && \
 cp /tmp/xdebug-2.4.0/modules/xdebug.so /usr/lib/php/20151012
 
 COPY templates/xdebug-cli.ini /etc/php/7.0/cli/conf.d/20-xdebug.ini
@@ -120,34 +121,34 @@ COPY templates/xdebug-apache.ini /etc/php/7.0/apache2/conf.d/20-xdebug.ini
 ###############################
 # enable SSH                  #
 ###############################
-RUN rm -f /etc/service/sshd/down &&
+RUN rm -f /etc/service/sshd/down && \
 /usr/sbin/enable_insecure_key
 
 ###############################
 # z.sh                        #
 ###############################
-RUN wget --no-check-certificate https://raw.github.com/rupa/z/master/z.sh -O /usr/local/bin/z.sh &&
-chmod +x /usr/local/bin/z.sh &&
+RUN wget --no-check-certificate https://raw.github.com/rupa/z/master/z.sh -O /usr/local/bin/z.sh && \
+chmod +x /usr/local/bin/z.sh && \
 echo '. /usr/local/bin/z.sh' >> /root/.bashrc
 
 ###############################
 # modman.phar                 #
 ###############################
-RUN git clone https://github.com/colinmollenhour/modman.git /usr/local/src/modman &&
-mv /usr/local/src/modman/modman /usr/local/bin/modman &&
+RUN git clone https://github.com/colinmollenhour/modman.git /usr/local/src/modman && \
+mv /usr/local/src/modman/modman /usr/local/bin/modman && \
 chmod +x /usr/local/bin/modman
 
 ###############################
 # composer.phar               #
 ###############################
-RUN curl -sS https://getcomposer.org/installer | sudo php -- --install-dir=/usr/local/bin &&
-mv /usr/local/bin/composer.phar /usr/local/bin/composer &&
+RUN curl -sS https://getcomposer.org/installer | sudo php -- --install-dir=/usr/local/bin && \
+mv /usr/local/bin/composer.phar /usr/local/bin/composer && \
 chmod +x /usr/local/bin/composer
 
 ###############################
 # magerun.phar                #
 ###############################
-RUN wget --no-check-certificate https://files.magerun.net/n98-magerun.phar -O /usr/local/bin/magerun &&
+RUN wget --no-check-certificate https://files.magerun.net/n98-magerun.phar -O /usr/local/bin/magerun && \
 chmod +x /usr/local/bin/magerun
 
 ###############################
@@ -158,9 +159,9 @@ RUN mkdir -p /var/www/share/dev/htdocs
 ###############################
 # ALIAS                       #
 ###############################
-RUN echo "alias p='cd /var/www/share/dev/htdocs'" >> ~/.bashrc &&
-echo "alias search='grep -rnw -C 100 . -e'" >> ~/.bashrc &&
-echo "export EDITOR='vim'"  >> ~/.bashrc &&
+RUN echo "alias p='cd /var/www/share/dev/htdocs'" >> ~/.bashrc && \
+echo "alias search='grep -rnw -C 100 . -e'" >> ~/.bashrc && \
+echo "export EDITOR='vim'"  >> ~/.bashrc && \
 echo "alis cl='rm -rf /var/www/share/dev/htdocs/www/var/cache/* && magerun cache:clean'" >> ~/.bashrc
 
 ###############################
