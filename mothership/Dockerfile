@@ -80,7 +80,7 @@ RUN apt-get update && apt-get install -y --force-yes \
 # Varnish                       #
 #################################
 RUN wget -qO - https://repo.varnish-cache.org/ubuntu/GPG-key.txt | sudo apt-key add - &&
-echo "deb https://repo.varnish-cache.org/ubuntu/ trusty varnish-3.0" >> /etc/apt/sources.list.d/varnish-cache.list &&
+echo "deb https://repo.varnish-cache.org/ubuntu/ trusty varnish-3.0" | sudo tee -a /etc/apt/sources.list.d/varnish-cache.list &&
 sudo apt-get update && sudo apt-get install -y --force-yes varnish
 
 #################################
