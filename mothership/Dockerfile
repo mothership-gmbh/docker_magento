@@ -53,6 +53,8 @@ RUN apt-get update && apt-get install -y --force-yes \
     php7.0-dev \
     php7.0-mbstring \
     php7.0-bcmath \
+    php7.0-xml \
+    php7.0-zip \
     libapache2-mod-php7.0 \
     # php7.0-memcache \
 
