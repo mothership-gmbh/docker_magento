@@ -164,7 +164,7 @@ RUN mkdir -p /var/www/share/dev/htdocs
 RUN echo "alias p='cd /var/www/share/dev/htdocs'" >> ~/.bashrc && \
 echo "alias search='grep -rnw -C 100 . -e'" >> ~/.bashrc && \
 echo "export EDITOR='vim'"  >> ~/.bashrc && \
-echo "alis cl='rm -rf /var/www/share/dev/htdocs/www/var/cache/* && magerun cache:clean'" >> ~/.bashrc
+echo "alias cl='rm -rf /var/www/share/dev/htdocs/www/var/cache/* && magerun cache:clean'" >> ~/.bashrc
 
 ###############################
 # Apache 2 host configuration #
