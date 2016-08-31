@@ -74,9 +74,16 @@ RUN apt-get update && apt-get install -y --force-yes \
 
     # Required for some stuff
     gem \
-    ruby
 
-## install https://github.com/tmuxinator/tmuxinator
+    # Required by mailcatcher
+    libsqlite3-dev
+
+#################################
+# Ruby 2                        #
+#################################
+RUN apt-add-repository ppa:brightbox/ruby-ng && \
+sudo apt-get update && \
+apt-get install ruby2.2 ruby2.2-dev -y --force-yes
 
 #################################
 # Varnish                       #
@@ -84,6 +91,14 @@ RUN apt-get update && apt-get install -y --force-yes \
 RUN curl http://repo.varnish-cache.org/debian/GPG-key.txt | sudo apt-key add - && \
 echo "deb https://repo.varnish-cache.org/ubuntu/ trusty varnish-3.0" | sudo tee -a /etc/apt/sources.list.d/varnish-cache.list && \
 sudo apt-get update && sudo apt-get install -y --force-yes varnish
+
+#################################
+# Mailcatcher                   #
+#################################
+RUN gem install mailcatcher --conservative --no-rdoc --no-ri && \
+    sed -i -e "s/.*sendmail_path =.*/sendmail_path = \/usr\/bin\/env catchmail -f mailcatcher@local\.docker/" /etc/php/7.0/apache2/php.ini && \
+    sed -i -e "s/.*sendmail_path =.*/sendmail_path = \/usr\/bin\/env catchmail -f mailcatcher@local\.docker/" /etc/php/7.0/cli/php.ini
+
 
 #################################
 # TMUXINATOR                    #
@@ -153,15 +168,12 @@ chmod +x /usr/local/bin/composer
 RUN wget --no-check-certificate https://files.magerun.net/n98-magerun.phar -O /usr/local/bin/magerun && \
 chmod +x /usr/local/bin/magerun
 
-###############################
-# create project dir          #
-###############################
-RUN mkdir -p /var/www/share/dev/htdocs
 
 ###############################
 # ALIAS                       #
 ###############################
 RUN echo "alias p='cd /var/www/share/dev/htdocs'" >> ~/.bashrc && \
+echo "alias m='cd /var/www/share/dev/htdocs/www'" >> ~/.bashrc && \
 echo "alias search='grep -rnw -C 100 . -e'" >> ~/.bashrc && \
 echo "export EDITOR='vim'"  >> ~/.bashrc && \
 echo "alias cl='rm -rf /var/www/share/dev/htdocs/www/var/cache/* && magerun cache:clean'" >> ~/.bashrc
@@ -169,10 +181,12 @@ echo "alias cl='rm -rf /var/www/share/dev/htdocs/www/var/cache/* && magerun cach
 ###############################
 # Apache 2 host configuration #
 ###############################
-RUN mkdir -p /var/log/local.docker
-RUN mkdir -p /var/www/share/dev/htdocs/www
+RUN mkdir -p /var/www/share/dev/htdocs && \
+    mkdir -p /var/log/local.docker && \
+    mkdir -p /var/www/share/dev/htdocs/www && \
+    mkdir /etc/apache2/ssl && \
+    mkdir -p /etc/my_init.d
 
-RUN mkdir /etc/apache2/ssl
 RUN cd /etc/apache2/ssl && openssl genrsa -out local_docker.key 2048
 RUN cd /etc/apache2/ssl && openssl req -new -x509 -key local_docker.key -out local_docker.cert -days 3650 -subj /CN=local_docker
 
@@ -180,8 +194,8 @@ RUN rm /etc/apache2/sites-enabled/000-default.conf
 COPY templates/project.conf /etc/apache2/sites-enabled/local-docker.conf
 RUN a2enmod ssl
 RUN a2enmod rewrite
-RUN service apache2 restart
 
+ADD apache.sh /etc/my_init.d/apache.sh
 
 # Clean up APT when done.
 RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
