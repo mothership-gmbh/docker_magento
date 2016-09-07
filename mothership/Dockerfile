@@ -174,7 +174,7 @@ chmod +x /usr/local/bin/magerun
 RUN sudo add-apt-repository ppa:chris-lea/node.js -y && \
 sudo apt-get update && \
 apt-get install nodejs -y --force-yes && \
-npm i -g npm &&
+npm i -g npm && \
 npm i -g grunt-cli
 
 ###############################
