@@ -79,6 +79,14 @@ RUN apt-get update && apt-get install -y --force-yes \
     libsqlite3-dev
 
 #################################
+# NODEJS                        #
+#################################
+RUN sudo add-apt-repository ppa:chris-lea/node.js -y && \
+sudo apt-get update && \
+apt-get install nodejs -y --force-yes && \
+npm i -g npm grunt-cli
+
+#################################
 # Ruby 2                        #
 #################################
 RUN apt-add-repository ppa:brightbox/ruby-ng && \
@@ -175,6 +183,8 @@ chmod +x /usr/local/bin/magerun
 RUN echo "alias p='cd /var/www/share/dev/htdocs'" >> ~/.bashrc && \
 echo "alias m='cd /var/www/share/dev/htdocs/www'" >> ~/.bashrc && \
 echo "alias search='grep -rnw -C 100 . -e'" >> ~/.bashrc && \
+echo "alias ..='cd ..'" >> ~/.bashrc && \
+echo "alias ports='netstat -tulanp'" >> ~/.bashrc && \
 echo "export EDITOR='vim'"  >> ~/.bashrc && \
 echo "alias cl='rm -rf /var/www/share/dev/htdocs/www/var/cache/* && magerun cache:clean'" >> ~/.bashrc
 
