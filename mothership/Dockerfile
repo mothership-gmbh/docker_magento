@@ -79,14 +79,6 @@ RUN apt-get update && apt-get install -y --force-yes \
     libsqlite3-dev
 
 #################################
-# NODEJS                        #
-#################################
-RUN sudo add-apt-repository ppa:chris-lea/node.js -y && \
-sudo apt-get update && \
-apt-get install nodejs -y --force-yes && \
-npm i -g npm grunt-cli
-
-#################################
 # Ruby 2                        #
 #################################
 RUN apt-add-repository ppa:brightbox/ruby-ng && \
@@ -176,6 +168,14 @@ chmod +x /usr/local/bin/composer
 RUN wget --no-check-certificate https://files.magerun.net/n98-magerun.phar -O /usr/local/bin/magerun && \
 chmod +x /usr/local/bin/magerun
 
+#################################
+# NODEJS                        #
+#################################
+RUN sudo add-apt-repository ppa:chris-lea/node.js -y && \
+sudo apt-get update && \
+apt-get install nodejs -y --force-yes && \
+npm i -g npm &&
+npm i -g grunt-cli
 
 ###############################
 # ALIAS                       #
