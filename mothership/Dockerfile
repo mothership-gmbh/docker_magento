@@ -55,6 +55,7 @@ RUN apt-get update && apt-get install -y --force-yes \
     php7.0-bcmath \
     php7.0-xml \
     php7.0-zip \
+    php7.0-soap \
     libapache2-mod-php7.0 \
     # php7.0-memcache \
 
@@ -191,7 +192,7 @@ echo "alias h='history'" >> ~/.bashrc && \
 echo "alias hg='history |grep'" >> ~/.bashrc && \
 echo "alias ports='netstat -tulanp'" >> ~/.bashrc && \
 echo "export EDITOR='vim'"  >> ~/.bashrc && \
-echo "alias cl='rm -rf /var/www/share/dev/htdocs/www/var/cache/* && magerun cache:clean'" >> ~/.bashrc
+echo "alias cl='rm -rf /var/www/share/dev/htdocs/www/var/cache/* && magerun cache:clean && varnishadm "ban.url ."'" >> ~/.bashrc
 
 ###############################
 # Apache 2 host configuration #
