@@ -16,6 +16,7 @@ mkdir -p ${PROJECT_VOlUME}/elasticsearch/data
 mkdir -p ${PROJECT_VOlUME}/elasticsearch/config
 mkdir -p ${PROJECT_VOlUME}/apache2
 mkdir -p ${PROJECT_VOlUME}/home
+mkdir -p ${PROJECT_VOlUME}/varnish/conf.d
 
 
 
@@ -26,7 +27,13 @@ fi
 
 cp ./elasticsearch/config/elasticsearch.yml ${PROJECT_VOlUME}/elasticsearch/config/elasticsearch.yml
 
+# Varnish pain
+cp ./varnish/conf.d/default.vcl ${PROJECT_VOlUME}/varnish/conf.d/default.vcl
+
+cp ./apache/ports.conf ${PROJECT_VOlUME}/apache2/ports.conf
+
 envsubst < ./apache/host.conf > ${PROJECT_VOlUME}/apache2/${PROJECT_NAME}.conf
+
 
 
 cat ${COMPOSE_CONFIG} | envsubst | docker-compose -f - -p "${PROJECT_NAME}" --verbose up
