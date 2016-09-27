@@ -18,16 +18,12 @@
 # sure you lock down to a specific version, not to `latest`!
 # See https://github.com/phusion/baseimage-docker/blob/master/Changelog.md for
 # a list of version numbers.
-
-# As PHP 7 is not supported yet, we will use another image then FROM phusion/baseimage:0.9.18
-# https://github.com/phusion/baseimage-docker/issues/305
-# FROM sunfoxcz/baseimage
 FROM phusion/baseimage:0.9.18
 
 # Use baseimage-docker's init system.
 CMD ["/sbin/my_init"]
 
-RUN sudo add-apt-repository ppa:ondrej/php -y
+RUN sudo add-apt-repository ppa:ondrej/php5-5.6 -y
 
 RUN apt-get update && apt-get install -y --force-yes \
 
@@ -38,26 +34,21 @@ RUN apt-get update && apt-get install -y --force-yes \
     # Install Apache2
     apache2 \
 
-    # Install PHP 7
-    php7.0 \
-    php7.0-cli \
-    php7.0-common \
-    php7.0-gd \
-    php7.0-mysql \
-    php7.0-curl \
-    php7.0-int \
-    php7.0-mcrypt \
-    php7.0-tidy \
-    php7.0-imap \
-    php7.0-xsl \
-    php7.0-dev \
-    php7.0-mbstring \
-    php7.0-bcmath \
-    php7.0-xml \
-    php7.0-zip \
-    php7.0-soap \
-    libapache2-mod-php7.0 \
-    # php7.0-memcache \
+    # Install PHP 5
+    php5 \
+    php5-cli \
+    php5-common \
+    php5-gd \
+    php5-mysql \
+    php5-curl \
+    php5-intl \
+    php5-mcrypt \
+    php5-tidy \
+    php5-xdebug \
+    php5-imagick \
+    php5-imap \
+    php5-xsl \
+    php5-memcache \
 
     # Install for mysql client
     mysql-client \
@@ -97,8 +88,8 @@ sudo apt-get update && sudo apt-get install -y --force-yes varnish
 # Mailcatcher                   #
 #################################
 RUN gem install mailcatcher --conservative --no-rdoc --no-ri && \
-    sed -i -e "s/.*sendmail_path =.*/sendmail_path = \/usr\/bin\/env catchmail -f mailcatcher@local\.docker/" /etc/php/7.0/apache2/php.ini && \
-    sed -i -e "s/.*sendmail_path =.*/sendmail_path = \/usr\/bin\/env catchmail -f mailcatcher@local\.docker/" /etc/php/7.0/cli/php.ini
+    sed -i -e "s/.*sendmail_path =.*/sendmail_path = \/usr\/bin\/env catchmail -f mailcatcher@local\.docker/" /etc/php5/apache2/php.ini && \
+    sed -i -e "s/.*sendmail_path =.*/sendmail_path = \/usr\/bin\/env catchmail -f mailcatcher@local\.docker/" /etc/php5/cli/php.ini
 
 
 #################################
@@ -126,15 +117,10 @@ ln -s /opt/logstash/bin/logstash /usr/bin/logstash
 # Based on:                     #
 # https://xdebug.org/wizard.php #
 #################################
-RUN cd /tmp && wget http://xdebug.org/files/xdebug-2.4.0.tgz && \
-cd /tmp && tar -xvzf xdebug-2.4.0.tgz && \
-cd /tmp/xdebug-2.4.0 && phpize && \
-cd /tmp/xdebug-2.4.0 && ./configure && \
-cd /tmp/xdebug-2.4.0 && make && \
-cp /tmp/xdebug-2.4.0/modules/xdebug.so /usr/lib/php/20151012
+RUN  rm /etc/php5/cli/conf.d/20-xdebug.ini
+COPY templates/xdebug-cli.ini /etc/php5/cli/conf.d/20-xdebug.ini
+COPY templates/xdebug-apache.ini /etc/php5/apache2/conf.d/20-xdebug.ini
 
-COPY templates/xdebug-cli.ini /etc/php/7.0/cli/conf.d/20-xdebug.ini
-COPY templates/xdebug-apache.ini /etc/php/7.0/apache2/conf.d/20-xdebug.ini
 
 ###############################
 # enable SSH                  #
