@@ -27,7 +27,7 @@ services:
 
   web:
     # build: ./mothership
-    image: mothership-gmbh/docker_magento:php5.6
+    image: mothership/docker_magento:php5.6
     environment:
       XDEBUG_CONFIG: idekey=PHPSTORM
       PROMPT_COMMAND: "history -a"
