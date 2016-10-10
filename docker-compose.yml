@@ -26,8 +26,8 @@ version: '2'
 services:
 
   web:
-    build: ./mothership
-    #image: azngeek/docker_magento:latest
+    #build: ./mothership
+    image: mothership-gmbh/docker_magento:latest
     environment:
       XDEBUG_CONFIG: idekey=PHPSTORM
       PROMPT_COMMAND: "history -a"
