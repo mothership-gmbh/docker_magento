@@ -34,7 +34,9 @@ cp ./apache/ports.conf ${PROJECT_VOlUME}/apache2/ports.conf
 
 envsubst < ./apache/host.conf > ${PROJECT_VOlUME}/apache2/${PROJECT_NAME}.conf
 
-
+# Script for syncing the remote database
+envsubst < ./scripts/syncdb.sh > ${PROJECT_VOlUME}/bin/syncdb.sh
+chmod +x ${PROJECT_VOlUME}/bin/syncdb.sh
 
 cat ${COMPOSE_CONFIG} | envsubst | docker-compose -f - -p "${PROJECT_NAME}" --verbose up
 #cat ${COMPOSE_CONFIG} | envsubst | docker-compose -f - -p "${PROJECT_NAME}" up --build
