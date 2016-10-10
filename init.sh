@@ -17,6 +17,7 @@ mkdir -p ${PROJECT_VOlUME}/elasticsearch/config
 mkdir -p ${PROJECT_VOlUME}/apache2
 mkdir -p ${PROJECT_VOlUME}/home
 mkdir -p ${PROJECT_VOlUME}/varnish/conf.d
+mkdir -p ${PROJECT_VOlUME}/bin
 
 
 

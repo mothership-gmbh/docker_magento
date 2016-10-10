@@ -38,6 +38,9 @@ services:
 
       # add bash history so that it wont get deleted
       - ${PROJECT_VOlUME}/home/.bash_history:/root/.bash_history
+
+      # scripts for syncing the remote database
+      - ${PROJECT_VOlUME}/bin/syncdb.sh:/usr/local/bin/syncdb.sh
     ports:
       - ${DOCKER_IP}:80:80
       - ${DOCKER_IP}:443:443
