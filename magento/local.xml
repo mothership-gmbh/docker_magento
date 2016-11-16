@@ -22,6 +22,7 @@ Sample configuraiton file
                     <password><![CDATA[super123]]></password>
                     <dbname><![CDATA[dev]]></dbname>
                     <initStatements><![CDATA[SET NAMES utf8]]></initStatements>
+                    <charset>utf8</charset>
                     <model><![CDATA[mysql4]]></model>
                     <type><![CDATA[pdo_mysql]]></type>
                     <pdoType><![CDATA[]]></pdoType>

@@ -43,3 +43,13 @@ If you aren't happy with your IP for the local network bridge, check your UUID a
 ```
 cat /var/db/dhcpd_leases
 ```
+
+## Network Configuration
+
+The Mac has a changing IP address (or none if you have no network access). Our current recommendation is to attach an unused IP to the lo0 interface on the Mac; for example: sudo ifconfig lo0 alias 10.200.10.1/24, and make sure that your service is listening on this address or 0.0.0.0 (ie not 127.0.0.1). Then containers can connect to this address.
+
+## Output all logs
+
+```
+watch -n 5  "tail -f /var/www/share/dev/htdocs/www/var/log/* > /var/log/syslog"
+```

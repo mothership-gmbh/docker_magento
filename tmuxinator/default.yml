@@ -1,0 +1,23 @@
+# ~/.tmuxinator/default.yml
+
+name: default
+root: /var/www/share/dev/htdocs
+
+
+windows:
+  # https://wiki.ubuntuusers.de/tmux/
+  # Switch windows with ctrl+b and [number]
+  - project:
+      root: /var/www/share/dev/htdocs
+
+  - editor:
+      layout: main-vertical
+      panes:
+        - vim
+        - guard
+  - logs:
+      layout: main-vertical
+      panes:
+        - tail -f /var/log/local.docker/*
+        - tail -f /var/log/apache2/*
+  - mariadb: mysql -usuper -psuper123 -hlink_mariadb

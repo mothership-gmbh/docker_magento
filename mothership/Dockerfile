@@ -22,12 +22,12 @@
 # As PHP 7 is not supported yet, we will use another image then FROM phusion/baseimage:0.9.18
 # https://github.com/phusion/baseimage-docker/issues/305
 # FROM sunfoxcz/baseimage
-FROM phusion/baseimage:0.9.18
+FROM phusion/baseimage:0.9.19
 
 # Use baseimage-docker's init system.
 CMD ["/sbin/my_init"]
 
-RUN sudo add-apt-repository ppa:ondrej/php -y
+RUN add-apt-repository ppa:ondrej/php -y
 
 RUN apt-get update && apt-get install -y --force-yes \
 
@@ -77,21 +77,24 @@ RUN apt-get update && apt-get install -y --force-yes \
     gem \
 
     # Required by mailcatcher
-    libsqlite3-dev
+    libsqlite3-dev \
+
+    # some debugging stuff
+    telnet
 
 #################################
 # Ruby 2                        #
 #################################
 RUN apt-add-repository ppa:brightbox/ruby-ng && \
-sudo apt-get update && \
+apt-get update && \
 apt-get install ruby2.2 ruby2.2-dev -y --force-yes
 
 #################################
 # Varnish                       #
 #################################
-RUN curl http://repo.varnish-cache.org/debian/GPG-key.txt | sudo apt-key add - && \
-echo "deb https://repo.varnish-cache.org/ubuntu/ trusty varnish-3.0" | sudo tee -a /etc/apt/sources.list.d/varnish-cache.list && \
-sudo apt-get update && sudo apt-get install -y --force-yes varnish
+RUN curl http://repo.varnish-cache.org/debian/GPG-key.txt | apt-key add - && \
+echo "deb https://repo.varnish-cache.org/ubuntu/ trusty varnish-3.0" | tee -a /etc/apt/sources.list.d/varnish-cache.list && \
+apt-get update && apt-get install -y --force-yes varnish
 
 #################################
 # Mailcatcher                   #
@@ -109,16 +112,16 @@ RUN gem install tmuxinator
 #################################
 # JAVA OPENJDK                  #
 #################################
-RUN sudo add-apt-repository ppa:openjdk-r/ppa -y && \
-sudo apt-get update && \
+RUN add-apt-repository ppa:openjdk-r/ppa -y && \
+apt-get update && \
 apt-get install openjdk-8-jre -y --force-yes
 
 ###############################
 # Logstash                    #
 ###############################
-RUN wget -qO - https://packages.elastic.co/GPG-KEY-elasticsearch | sudo apt-key add - && \
-echo "deb https://packages.elastic.co/logstash/2.3/debian stable main" | sudo tee -a /etc/apt/sources.list && \
-sudo apt-get update && sudo apt-get install -y --force-yes logstash && \
+RUN wget -qO - https://packages.elastic.co/GPG-KEY-elasticsearch | apt-key add - && \
+echo "deb https://packages.elastic.co/logstash/2.3/debian stable main" | tee -a /etc/apt/sources.list && \
+apt-get update && apt-get install -y --force-yes logstash && \
 ln -s /opt/logstash/bin/logstash /usr/bin/logstash
 
 #################################
@@ -159,7 +162,7 @@ chmod +x /usr/local/bin/modman
 ###############################
 # composer.phar               #
 ###############################
-RUN curl -sS https://getcomposer.org/installer | sudo php -- --install-dir=/usr/local/bin && \
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin && \
 mv /usr/local/bin/composer.phar /usr/local/bin/composer && \
 chmod +x /usr/local/bin/composer
 
@@ -172,13 +175,10 @@ chmod +x /usr/local/bin/magerun
 #################################
 # NODEJS                        #
 #################################
-RUN sudo add-apt-repository ppa:chris-lea/node.js -y && \
-sudo apt-get update && \
-apt-get install nodejs -y --force-yes && \
-npm i -g npm && \
-npm i -g grunt-cli && \
-npm i -g typings && \
-npm i -g typescript
+RUN add-apt-repository ppa:chris-lea/node.js -y -r && \
+rm -f /etc/apt/sources.list.d/chris-lea-node_js-*.list && \
+apt-get update && \
+apt-get install nodejs -y --force-yes
 
 ###############################
 # ALIAS                       #

@@ -1,4 +1,4 @@
-cluster.name: elasticsearch_9200
+cluster.name: mothership_elasticsearch_dev
 
 node.local: true
 discovery.zen.ping.multicast: false
