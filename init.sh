@@ -16,9 +16,11 @@ mkdir -p ${PROJECT_VOlUME}/elasticsearch/data
 mkdir -p ${PROJECT_VOlUME}/elasticsearch/config
 mkdir -p ${PROJECT_VOlUME}/apache2
 mkdir -p ${PROJECT_VOlUME}/home
+mkdir -p ${PROJECT_VOlUME}/php
 mkdir -p ${PROJECT_VOlUME}/varnish/conf.d
 mkdir -p ${PROJECT_VOlUME}/bin
 
+sudo ifconfig lo0 alias 10.200.10.1/24
 
 
 if [ ! -f ${PROJECT_VOlUME}/home/.bash_history ]; then
@@ -26,6 +28,7 @@ if [ ! -f ${PROJECT_VOlUME}/home/.bash_history ]; then
     cp ./home/.bash_history ${PROJECT_VOlUME}/home/.bash_history
 fi
 
+# copy the elasticsearch configuration
 cp ./elasticsearch/config/elasticsearch.yml ${PROJECT_VOlUME}/elasticsearch/config/elasticsearch.yml
 
 # Varnish pain
@@ -39,6 +42,6 @@ envsubst < ./apache/host.conf > ${PROJECT_VOlUME}/apache2/${PROJECT_NAME}.conf
 envsubst < ./scripts/syncdb.sh > ${PROJECT_VOlUME}/bin/syncdb.sh
 chmod +x ${PROJECT_VOlUME}/bin/syncdb.sh
 
-cat ${COMPOSE_CONFIG} | envsubst | docker-compose -f - -p "${PROJECT_NAME}" --verbose up
-#cat ${COMPOSE_CONFIG} | envsubst | docker-compose -f - -p "${PROJECT_NAME}" up --build
+#cat ${COMPOSE_CONFIG} | envsubst | docker-compose -f - -p "${PROJECT_NAME}" --verbose up
+cat ${COMPOSE_CONFIG} | envsubst | docker-compose -f - -p "${PROJECT_NAME}" up --build
 #cat ${COMPOSE_CONFIG} | envsubst | docker-compose -f - -p "${PROJECT_NAME}" up -d
