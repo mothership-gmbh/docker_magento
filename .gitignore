@@ -2,3 +2,6 @@
 container_configuration/nginx/generated/nginx.key
 container_configuration/nginx/generated/nginx.crt
 container_configuration/nginx/generated/magento.conf
+
+# Ignore all sql files
+container_configuration/db/dump/*sql*
