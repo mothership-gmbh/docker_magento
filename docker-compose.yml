@@ -25,55 +25,62 @@
 version: '2'
 services:
 
-  web:
-    build: ./mothership
-    #image: mothership/docker_magento:latest
+  php-fpm:
+    container_name: ms-php
+    build: ./dockerfiles/php-fpm
+    networks:
+      mothership: { aliases: [ "link_php" ] }
     environment:
-      #XDEBUG_CONFIG: "idekey=PHPSTORM remote_host=172.16.79.4 remote_log=/var/log/xdebug_remote.log"
-      XDEBUG_CONFIG: "idekey=PHPSTORM remote_host=10.200.10.1 remote_log=/var/log/xdebug_remote.log"
-      PROMPT_COMMAND: "history -a"
-
+      XDEBUG_CONFIG: "idekey=PHPSTORM"
+    restart: always
     volumes:
       - ${PROJECT_VOlUME}/htdocs:/var/www/share/dev/htdocs
-      - ${PROJECT_VOlUME}/apache2/${PROJECT_NAME}.conf:/etc/apache2/sites-enabled/${PROJECT_NAME}.conf
 
-      # add bash history so that it wont get deleted
+      # Allow a persistent bash history by mounting a host file
       - ${PROJECT_VOlUME}/home/.bash_history:/root/.bash_history
+      - ./dockerfiles/php-fpm/home/.bashrc:/root/.bashrc
 
-      # scripts for syncing the remote database
-      - ${PROJECT_VOlUME}/bin/syncdb.sh:/usr/local/bin/syncdb.sh
-
-      # Overwrite the php configuration
-      - ./php/conf.d/xdebug-apache.ini:/etc/php/7.0/apache2/conf.d/20-xdebug.ini
-    ports:
-      - "80:80"
-      - "443:443"
-      - "2222:22"
-      - "1080:1080"
+  nginx:
+    container_name: ms-nginx
+    image: nginx:1.11
     restart: always
+    volumes:
+      - ${PROJECT_VOlUME}/htdocs:/var/www/share/dev/htdocs
+
+      # configuration
+      - ./container_configuration/nginx/generated/magento.conf:/etc/nginx/conf.d/magento.conf:ro
+      - ./container_configuration/nginx/generated/nginx.crt:/etc/nginx/ssl/magento.crt:ro
+      - ./container_configuration/nginx/generated/nginx.key:/etc/nginx/ssl/magento.key:ro
+    depends_on:
+      - php-fpm
     networks:
       - mothership
+    ports:
+      - 80:80
+      - 443:443
 
   maria_db:
-    image: paintedfox/mariadb
+    container_name: ms-db
+    image: mariadb
+    restart: always
     environment:
-      USER: super
-      PASS: super123
+      MYSQL_USER: super
+      MYSQL_PASSWORD: super123
+      MYSQL_DATABASE: dev
+      MYSQL_ROOT_PASSWORD: root
     volumes:
-      - ${PROJECT_VOlUME}/db:/data
+      - ${PROJECT_VOlUME}/db:/var/lib/mysql
+
+      # Add the dumps into that directory so that the database will be built automatically
+      - ./container_configuration/db/dump:/docker-entrypoint-initdb.d
     ports:
       - ${DOCKER_IP}:3306:3306
     networks:
       mothership: { aliases: [ "link_mariadb" ] }
-# ssh-keygen -R -> fixes host keys
-# SET HOME DIRECTORY for ROOT USER!
-# docker run -d -p 9200:9200 -p 9300:9300 -v /home/docker/elasticsearch/data:/usr/share/elasticsearch/data -v /home/docker/elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml elasticsearch:2.1 /usr/share/elasticsearch/bin/elasticsearch -Des.insecure.allow.root=true
 
   elasticsearch:
+    container_name: ms-es
     image: elasticsearch:2.3.3
-    environment:
-      USER: super
-      PASS: super123
     volumes:
       - ${PROJECT_VOlUME}/elasticsearch/data:/usr/share/elasticsearch/data
       - ${PROJECT_VOlUME}/elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
@@ -83,15 +90,6 @@ services:
     command: /usr/share/elasticsearch/bin/elasticsearch -Des.insecure.allow.root=true
     networks:
       mothership: { aliases: [ "link_elastic" ] }
-
-  # Kibana 5 requires elasticsearch 2.2
-  kibana:
-    image: kibana:4.5.1
-    networks:
-      - mothership
-    ports:
-      - ${DOCKER_IP}:5601:5601
-
 
 networks:
   mothership:

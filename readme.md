@@ -53,3 +53,48 @@ The Mac has a changing IP address (or none if you have no network access). Our c
 ```
 watch -n 5  "tail -f /var/www/share/dev/htdocs/www/var/log/* > /var/log/syslog"
 ```
+
+
+
+
+
+## Debugging
+
+The PHP-FPM xdebug extension will broadcast all outgoing connections to the remote port ```9999```. The default port is 9000 but this is reserved by the php-fpm
+container. To enable debugging, you need to edit the PHPStorm preferences. "Languages & Frameworks > PHP > Debug". You can set it for the current project but also for any other one.
+
+## Hints
+
+There are some tweaks and commands which will make your life easier. For example:
+
+### Commands
+
+Check the directory ```docker_magento/dockerfiles/php-fpm/home/.bashrc``` which contains some alias for example to quickly navigate from one directory to another.
+
+# The docker file contains different containers
+
+## PHP-FPM
+
+# MariaDB
+
+## Rebuild the database
+
+The database container will check for every data in the mounted directory ```${PROJECT_VOlUME}/db``` . If that directory is empty then for every file which is in
+the directory ```docker-entrypoint-initdb.d``` the sql file will be imported. Please check the official [documentation](https://hub.docker.com/_/mariadb/) for further details.
+
+```
+    # add the local db to the entrypoint
+      - ./db:/docker-entrypoint-initdb.d
+```
+
+Otherwise you can manually import the database with ```magerun db:import``` or by logging into the database container and running some queries.
+
+
+
+
+
+## Elasticsearch
+
+## Certificates
+
+http://www.selfsignedcertificate.com/
