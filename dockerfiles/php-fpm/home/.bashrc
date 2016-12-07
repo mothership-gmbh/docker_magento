@@ -28,3 +28,8 @@ alias hg='history |grep'
 alias ports='netstat -tulanp'
 export EDITOR='vim'
 alias cl='rm -rf /var/www/share/dev/htdocs/www/var/cache/* && magerun cache:clean && varnishadm "ban.url ."'
+
+# Write the history to the file
+# http://askubuntu.com/questions/67283/is-it-possible-to-make-writing-to-bash-history-immediate
+shopt -s histappend
+export PROMPT_COMMAND="history -a; history -c; history -r; $PROMPT_COMMAND"
