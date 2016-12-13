@@ -27,7 +27,7 @@ services:
 
   php-fpm:
     container_name: ms-php
-    build: ./dockerfiles/php-fpm
+    image: mothership/docker_magento:php7
     networks:
       mothership: { aliases: [ "link_php" ] }
     environment:
@@ -80,7 +80,8 @@ services:
 
   elasticsearch:
     container_name: ms-es
-    image: elasticsearch:2.3.3
+    image: elasticsearch:1.7.4
+    restart: always
     volumes:
       - ${PROJECT_VOlUME}/elasticsearch/data:/usr/share/elasticsearch/data
       - ${PROJECT_VOlUME}/elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
