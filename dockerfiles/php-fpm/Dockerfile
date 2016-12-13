@@ -1,4 +1,4 @@
-FROM php:7-fpm
+FROM php:7.0.14-fpm
 
 ENV TERM=xterm
 
