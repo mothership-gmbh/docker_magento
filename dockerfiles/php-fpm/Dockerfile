@@ -60,6 +60,8 @@ RUN composer global require "hirak/prestissimo:^0.3"
 
 ADD ./conf.d/mothership.ini /usr/local/etc/php/conf.d/mothership.ini
 ADD ./conf.d/xdebug.ini /usr/local/etc/php/conf.d/xdebug.ini
+ADD ./conf.d/sendmail.ini /usr/local/etc/php/conf.d/sendmail.ini
+ADD ./etc/ssmtp/ssmtp.conf /etc/ssmtp/ssmtp.conf
 
 
 RUN cd /tmp && \
