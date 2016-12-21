@@ -62,6 +62,7 @@ services:
   mailcatcher:
     container_name: ms-mail
     image: schickling/mailcatcher
+    restart: always
     networks:
       mothership: { aliases: [ "link_mailcatcher" ] }
     ports:
