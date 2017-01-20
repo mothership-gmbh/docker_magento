@@ -15,7 +15,7 @@ RUN apt-get update && apt-get install -y \
         telnet \
         mysql-client \
         ssmtp \
-    && docker-php-ext-install -j$(nproc) iconv mcrypt pdo_mysql xsl \
+    && docker-php-ext-install -j$(nproc) iconv mcrypt pdo_mysql xsl zip bcmath \
     && docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ \
     && docker-php-ext-install -j$(nproc) gd
 
