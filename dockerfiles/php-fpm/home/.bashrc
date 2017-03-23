@@ -35,3 +35,7 @@ alias logs='tail -f /var/www/share/dev/htdocs/www/var/log/*'
 # http://askubuntu.com/questions/67283/is-it-possible-to-make-writing-to-bash-history-immediate
 shopt -s histappend
 export PROMPT_COMMAND="history -a; history -c; history -r; $PROMPT_COMMAND"
+. /usr/local/bin/z.sh
+
+# Tweak to show the current path
+export PS1='$(pwd)$ '

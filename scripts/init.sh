@@ -16,6 +16,7 @@ mkdir -p ${PROJECT_VOlUME}/elasticsearch/data
 mkdir -p ${PROJECT_VOlUME}/elasticsearch/config
 mkdir -p ${PROJECT_VOlUME}/bin
 mkdir -p ${PROJECT_VOlUME}/home
+mkdir -p ${PROJECT_VOlUME}/mongodb/data
 
 # Enable a custom network adapter. This adapter will only last until the next
 # restart but require root privileges. The adapter is required as a workaround

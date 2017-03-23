@@ -1,26 +1,11 @@
-FROM php:7.0.14-fpm
+FROM prooph/php:7.1-fpm-xdebug
 
 ENV TERM=xterm
 
-RUN apt-get update && apt-get install -y \
-        libfreetype6-dev \
-        libjpeg62-turbo-dev \
-        libxslt-dev \
-        libmcrypt-dev \
-        libpng12-dev \
-        git \
-        wget \
-        vim \
-        graphviz \
-        telnet \
-        mysql-client \
-        ssmtp \
-    && docker-php-ext-install -j$(nproc) iconv mcrypt pdo_mysql xsl zip bcmath \
-    && docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ \
-    && docker-php-ext-install -j$(nproc) gd
-
-RUN pecl install redis xdebug && docker-php-ext-enable redis xdebug
-
+###############################
+# Stuff for terminal          #
+###############################
+RUN apk add --no-cache wget bash ncurses
 
 ###############################
 # z.sh                        #
@@ -56,22 +41,13 @@ RUN curl -sL https://getcomposer.org/download/1.2.0/composer.phar -o /usr/local/
 RUN composer global require "hirak/prestissimo:^0.3"
 
 
-
-
-ADD ./conf.d/mothership.ini /usr/local/etc/php/conf.d/mothership.ini
-ADD ./conf.d/xdebug.ini /usr/local/etc/php/conf.d/xdebug.ini
+#ADD ./conf.d/mothership.ini /usr/local/etc/php/conf.d/mothership.ini
 ADD ./conf.d/sendmail.ini /usr/local/etc/php/conf.d/sendmail.ini
 ADD ./etc/ssmtp/ssmtp.conf /etc/ssmtp/ssmtp.conf
 
 
-RUN cd /tmp && \
-    curl -sL https://github.com/alanxz/rabbitmq-c/releases/download/v0.8.0/rabbitmq-c-0.8.0.tar.gz -o rabbitmq-c-0.8.0.tar.gz  && \
-    tar xzf rabbitmq* && cd rabbitmq* && ./configure && make && make install
 
-RUN pecl install amqp && docker-php-ext-enable amqp
-
-RUN apt-get autoremove -y && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+#RUN apk del .build-deps && \
+#    rm -rf /tmp/*
 
 WORKDIR /var/www/share/dev/

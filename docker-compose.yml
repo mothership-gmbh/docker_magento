@@ -27,7 +27,8 @@ services:
 
   php-fpm:
     container_name: ms-php
-    image: mothership/docker_magento:php7
+    #image: mothership/docker_magento:php7
+    build: dockerfiles/php-fpm
     networks:
       mothership: { aliases: [ "link_php" ] }
     environment:
@@ -39,6 +40,7 @@ services:
       # Allow a persistent bash history by mounting a host file
       - ${PROJECT_VOlUME}/home/.bash_history:/root/.bash_history
       - ./dockerfiles/php-fpm/home/.bashrc:/root/.bashrc
+      - ./dockerfiles/php-fpm/conf.d/xdebug.ini:/usr/local/etc/php/conf.d/xdebug.ini
 
   nginx:
     container_name: ms-nginx
@@ -90,7 +92,7 @@ services:
 
   elasticsearch:
     container_name: ms-es
-    image: elasticsearch:1.7.4
+    image:  elasticsearch:2.3.3
     restart: always
     volumes:
       - ${PROJECT_VOlUME}/elasticsearch/data:/usr/share/elasticsearch/data
@@ -101,6 +103,32 @@ services:
     command: /usr/share/elasticsearch/bin/elasticsearch -Des.insecure.allow.root=true
     networks:
       mothership: { aliases: [ "link_elastic" ] }
+
+  mongodb:
+    container_name: ms-mongo
+    image: mongo:3.4.2
+    restart: always
+    volumes:
+      - ${PROJECT_VOlUME}/mongodb/data:/data/db
+    ports:
+      - ${DOCKER_IP}:27017:27017
+    networks:
+      mothership: { aliases: [ "link_mongo" ] }
+
+  # https://hub.docker.com/_/rabbitmq/
+  rabbitmq:
+    container_name: ms-queue
+    image:   rabbitmq:3.6.6-management
+    restart: always
+    environment:
+      RABBITMQ_NODENAME: quefo
+      RABBITMQ_DEFAULT_USER: rabbit
+      RABBITMQ_DEFAULT_PASS: rabbit
+    ports:
+      - ${DOCKER_IP}:15672:15672
+      - ${DOCKER_IP}:5672:5672
+    networks:
+      mothership: { aliases: [ "libk_mq" ] }
 
 networks:
   mothership:
