@@ -35,10 +35,10 @@ services:
       XDEBUG_CONFIG: "idekey=PHPSTORM"
     restart: always
     volumes:
-      - /Volumes/projects/docker/volumes/exxpozed/htdocs:/var/www/share/dev/htdocs
+      - ${PROJECT_VOlUME}/htdocs:/var/www/share/dev/htdocs
 
       # Allow a persistent bash history by mounting a host file
-      - /Volumes/projects/docker/volumes/exxpozed/home/.bash_history:/root/.bash_history
+      - ${PROJECT_VOlUME}/home/.bash_history:/root/.bash_history
       - ./dockerfiles/php-fpm/home/.bashrc:/root/.bashrc
       - ./dockerfiles/php-fpm/conf.d/xdebug.ini:/usr/local/etc/php/conf.d/xdebug.ini
 
@@ -47,7 +47,7 @@ services:
     image: nginx:1.11
     restart: always
     volumes:
-      - /Volumes/projects/docker/volumes/exxpozed/htdocs:/var/www/share/dev/htdocs
+      - ${PROJECT_VOlUME}/htdocs:/var/www/share/dev/htdocs
 
       # configuration
       - ./container_configuration/nginx/generated/magento.conf:/etc/nginx/conf.d/default.conf:ro
@@ -81,12 +81,12 @@ services:
       MYSQL_DATABASE: dev
       MYSQL_ROOT_PASSWORD: root
     volumes:
-      - /Volumes/projects/docker/volumes/exxpozed/db:/var/lib/mysql
+      - ${PROJECT_VOlUME}/db:/var/lib/mysql
 
       # Add the dumps into that directory so that the database will be built automatically
       - ./container_configuration/db/dump:/docker-entrypoint-initdb.d
     ports:
-      - 10.200.10.1:3306:3306
+      - ${DOCKER_IP}:3306:3306
     networks:
       mothership: { aliases: [ "link_mariadb" ] }
 
@@ -95,11 +95,11 @@ services:
     image:  elasticsearch:2.3.3
     restart: always
     volumes:
-      - /Volumes/projects/docker/volumes/exxpozed/elasticsearch/data:/usr/share/elasticsearch/data
-      - /Volumes/projects/docker/volumes/exxpozed/elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+      - ${PROJECT_VOlUME}/elasticsearch/data:/usr/share/elasticsearch/data
+      - ${PROJECT_VOlUME}/elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
     ports:
-      - 10.200.10.1:9200:9200
-      - 10.200.10.1:9300:9300
+      - ${DOCKER_IP}:9200:9200
+      - ${DOCKER_IP}:9300:9300
     command: /usr/share/elasticsearch/bin/elasticsearch -Des.insecure.allow.root=true
     networks:
       mothership: { aliases: [ "link_elastic" ] }
@@ -109,9 +109,9 @@ services:
     image: mongo:3.4.2
     restart: always
     volumes:
-      - /Volumes/projects/docker/volumes/exxpozed/mongodb/data:/data/db
+      - ${PROJECT_VOlUME}/mongodb/data:/data/db
     ports:
-      - 10.200.10.1:27017:27017
+      - ${DOCKER_IP}:27017:27017
     networks:
       mothership: { aliases: [ "link_mongo" ] }
 
@@ -125,8 +125,8 @@ services:
       RABBITMQ_DEFAULT_USER: rabbit
       RABBITMQ_DEFAULT_PASS: rabbit
     ports:
-      - 10.200.10.1:15672:15672
-      - 10.200.10.1:5672:5672
+      - ${DOCKER_IP}:15672:15672
+      - ${DOCKER_IP}:5672:5672
     networks:
       mothership: { aliases: [ "libk_mq" ] }
 

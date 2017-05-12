@@ -1,11 +1,11 @@
-FROM prooph/php:7.1-fpm-xdebug
+FROM prooph/php:7.0-fpm-xdebug
 
 ENV TERM=xterm
 
 ###############################
 # Stuff for terminal          #
 ###############################
-RUN apk add --no-cache wget bash ncurses
+RUN apk update && apk add --no-cache wget bash ncurses coreutils util-linux coreutils binutils findutils grep
 
 ###############################
 # z.sh                        #
